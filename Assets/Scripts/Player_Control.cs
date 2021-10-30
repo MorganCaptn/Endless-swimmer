@@ -4,22 +4,29 @@ using UnityEngine;
 
 public class Player_Control : MonoBehaviour
 {
+    public GameObject player_model;
     public float movspeed = 8f;
+    public float rotspeed = 36f;
     public float max_move_left = -5.8f;
     public float max_move_right = 5.8f;
     public float reset_x_pos = 0f;
     public float reset_x_pos_threshold = 0.5f;
     public float magnet_strength = 1f;
-    public Material defeat_material;
-    
 
-    private MeshRenderer my_renderer;
+
+    private bool collided_with_obstacle = false;
+    private bool movement_allowed = true;
+    private PlayerModel player_model_script;
+    private Quaternion initial_rotation;
+
+
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("Created object!");
-        my_renderer = GetComponent<MeshRenderer>();
-        
+
+       initial_rotation = transform.rotation;
+       player_model_script = player_model.gameObject.GetComponent<PlayerModel>();
         /*
         if (my_renderer != null)
         {
@@ -32,43 +39,50 @@ public class Player_Control : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float h = Input.GetAxis("Horizontal") * movspeed;
-       
-        //current position
-        Vector3 playerPosition = transform.position;
-        MagnetBackToPos(playerPosition);
-
-        Debug.Log(playerPosition.x);
-        if (playerPosition.x <= max_move_right && playerPosition.x >= max_move_left)
-        {
-            transform.Translate(h * Time.deltaTime, 0, 0);
-        }
-        else if (playerPosition.x > max_move_right)
-        {
-            transform.position = new Vector3(max_move_right, transform.position.y, transform.position.z);
-        }
-        else if (playerPosition.x < max_move_left)
-        {
-            transform.position = new Vector3(max_move_left, transform.position.y, transform.position.z);
-        }
-
-
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Object collided!");
-        my_renderer.material = defeat_material;
         /*
-        if (collision.collider.name == "BlueObject")
+        if(player_model_script.GetCollisionStatus())
         {
-            Debug.Log(collision.collider.name);
-            Debug.Log("Impulse: " + collision.impulse);
-            Debug.Log("Relative Velocity" + collision.relativeVelocity);
+            Debug.Log("GOOOT IT");
+            collided_with_obstacle = player_model_script.GetCollisionStatus();
         }
         */
+
+        float h = Input.GetAxis("Horizontal") * movspeed;
+        float r = Input.GetAxis("Horizontal") * rotspeed;
+        //current position
+        Vector3 playerPosition = transform.position;
+
+        RotateBackToCenter(transform.rotation);
+        
+        if (movement_allowed)
+        {
+            if (playerPosition.x <= max_move_right && playerPosition.x >= max_move_left)
+            {
+                //add slight rotation to movement
+                player_model.transform.Rotate(0, r * Time.deltaTime, 0);
+                transform.Translate(h * Time.deltaTime, 0, 0);
+            }
+            else if (playerPosition.x > max_move_right)
+            {
+              
+                
+
+                transform.position = new Vector3(max_move_right, transform.position.y, transform.position.z);
+            }
+            else if (playerPosition.x < max_move_left)
+            {
+                transform.position = new Vector3(max_move_left, transform.position.y, transform.position.z);
+            }
+        }
+        
+    
+
+
     }
 
+
+
+    /*
     private void MagnetBackToPos(Vector3 currentPos)
     {
         if (currentPos.x > reset_x_pos + reset_x_pos_threshold)
@@ -80,5 +94,29 @@ public class Player_Control : MonoBehaviour
             transform.Translate(magnet_strength * Time.deltaTime, 0, 0);
         }
     }
+    */
+    public bool GetCollisionStatus()
+    {
+        return collided_with_obstacle;
+    }
+
+    private void RotateBackToCenter(Quaternion current_rotation)
+    {
+        Debug.Log("Rotate back");
+ 
+    }
+    /*
+    public void SetCollisionStatus(bool is_collided)
+    {
+        collided_with_obstacle = is_collided;
+    }
+    */
+    public void SetMovement(bool can_move)
+    {
+        movement_allowed = can_move;
+    }
+     
+   
+
 
 }
