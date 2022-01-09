@@ -21,13 +21,17 @@ public class PlayerModel : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!player_collided)
+        if (other.gameObject.tag == "Wall")
         {
-            player_collided = true;
-            my_renderer.material = defeat_material;
-            Debug.Log("Player collided with obstacle!");
+            if (!player_collided)
+            {
+                player_collided = true;
+                my_renderer.material = defeat_material;
+                Debug.Log("Player collided with obstacle!");
+            }
         }
-    }
+
+        }
 
     public bool GetCollisionStatus()
     {
