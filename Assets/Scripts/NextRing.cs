@@ -21,7 +21,7 @@ public class NextRing : MonoBehaviour
     {
         if (other.gameObject.tag == "Ring")
         {
-
+         
             if (!ring_collided)
             {
                 ring_collided = true;

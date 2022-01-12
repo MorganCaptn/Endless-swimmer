@@ -26,6 +26,9 @@ public class RespawnRing : MonoBehaviour
             {
                 ring_collided = true;
                 collision_object = other.gameObject;
+                //TODO: Set respawn flag to true
+
+
                
             }
         }
@@ -38,7 +41,7 @@ public class RespawnRing : MonoBehaviour
 
     public GameObject GetColliderObject()
     {
-        //TODO: Improve! Does not seem to be very efficient way of returning the wall movement script.
+        //TODO: Improve! Does not seem to be very efficient way of returning the ring movement script.
 
         if (collision_object.TryGetComponent<Ring_Movement>(out var script))
         {

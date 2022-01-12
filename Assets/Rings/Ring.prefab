@@ -58,6 +58,7 @@ GameObject:
   - component: {fileID: 1994787967630529864}
   - component: {fileID: 1277927434}
   - component: {fileID: 1277927435}
+  - component: {fileID: 1681615745}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Ring
@@ -157,3 +158,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.61, y: 2.02, z: 0.61}
   m_Center: {x: 0.00000005960464, y: -2.032879e-20, z: -0.00000008940699}
+--- !u!114 &1681615745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994787967630529867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad052415f6d3ab47a24181f0a788ad8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  point_value: 20
+  defeat_material: {fileID: 2100000, guid: b7ea501ed7433404ba1b170b5c256581, type: 2}

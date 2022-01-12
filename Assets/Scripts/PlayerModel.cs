@@ -5,8 +5,10 @@ using UnityEngine;
 public class PlayerModel : MonoBehaviour
 {
     private bool player_collided;
+    private int player_score = 0;
     public Material defeat_material;
     private MeshRenderer my_renderer;
+    private Ring ring_script;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,11 +33,22 @@ public class PlayerModel : MonoBehaviour
             }
         }
 
+        if (other.gameObject.tag == "Ring")
+        {
+            ring_script = other.gameObject.GetComponent<Ring>();
+            player_score += ring_script.GetPoints();
         }
+
+    }
 
     public bool GetCollisionStatus()
     {
         return player_collided;
+    }
+
+    public int GetPlayerScore()
+    {
+        return player_score;
     }
 
     public void ResetObstacleCollision()

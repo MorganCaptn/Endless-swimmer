@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObstacleManager : MonoBehaviour
 {
-
+    //TODO: Do the same stuff like in the RingManager
     public GameObject[] obstacles;
 
     public GameObject spawn_line;

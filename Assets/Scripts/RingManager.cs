@@ -9,13 +9,15 @@ public class RingManager : MonoBehaviour
     public GameObject spawn_line;
     public GameObject next_ring_line;
     public GameObject respawn_line;
-
+    public float ring_cooldown = 20.0f;
+    public float spawn_probability = 1.0f;
 
     private GameObject[] instanciated_rings;
     private bool spawn_next_ring = true;
     private NextRing next_ring_script;
     private RespawnRing respawn_ring_script;
-
+    private bool spawn_cooldown = false;
+ 
     private Vector3 spawn_pos;
     private Vector3 pool_position = new Vector3(50, 50, 0);
 
@@ -32,6 +34,16 @@ public class RingManager : MonoBehaviour
     void Update()
     {
 
+        //Set occurance probaility
+        float probability = Random.Range(0.0f, 1.0f);
+        float threshold = 1.0f - spawn_probability;
+  
+
+        //Let the rings do following
+
+        //that theirselves!
+
+        /*
         if (respawn_ring_script.GetCollisionStatus())
         {
             //Get object ID of collider and set flag to respawn
@@ -44,15 +56,22 @@ public class RingManager : MonoBehaviour
             spawn_next_ring = true;
             next_ring_script.ResetRingCollision();
         }
+        */
 
 
-
-        if (spawn_next_ring)
+        if (probability >= threshold && !spawn_cooldown)
         {
             spawn_next_ring = false;
             SpawnRing();
 
         }
+
+        //Add respawn cooldown
+        if (!spawn_cooldown)
+        {
+            StartCoroutine(CooldownTimer());
+        }
+
 
     }
 
@@ -74,11 +93,20 @@ public class RingManager : MonoBehaviour
 
     }
 
+    private IEnumerator CooldownTimer()
+    {
+        spawn_cooldown = true;
+        // then wait for it's cooldown.
+        yield return new WaitForSeconds(ring_cooldown);
+        spawn_cooldown = false;
+    }
+
+
+
     public void SpawnRing()
     {
 
         //get random numbers
-
         int random_pick = Random.Range(0, instanciated_rings.Length);
         float random_height = Random.Range(-3.8f, 3.8f);
         float random_width = Random.Range(-3.8f, 3.8f);
@@ -86,11 +114,10 @@ public class RingManager : MonoBehaviour
         //Access the obstacle script
         Ring_Movement script = instanciated_rings[random_pick].GetComponent<Ring_Movement>();
 
-
         //Check if pick is from pool
         if (script.GetPoolSpawnFlag())
         {
-            Debug.Log("Pick is form pool.");
+            Debug.Log("Pick is from pool.");
             instanciated_rings[random_pick].transform.position = instance_pos;
             script.SetMovement(true);
             script.SetPoolSpawnFlag(false);
@@ -109,7 +136,6 @@ public class RingManager : MonoBehaviour
             Debug.Log("Could not find a suitable pick.");
             spawn_next_ring = true;
         }
-
 
     }
 

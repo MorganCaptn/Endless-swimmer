@@ -20,16 +20,17 @@ public class Ring_Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-     
 
-            if (movement)
+
+        if (movement)
         {
             transform.Translate(Vector3.back * movespeed * Time.deltaTime);
 
         }
 
-        
+
     }
+
 
     public void SetMovement(bool move)
     {
@@ -46,6 +47,7 @@ public class Ring_Movement : MonoBehaviour
     {
         respawn = can_be_respawned;
     }
+
 
     public void SetPoolSpawnFlag(bool spawned)
     {
