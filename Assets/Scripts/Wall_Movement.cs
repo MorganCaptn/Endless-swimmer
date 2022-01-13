@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Wall_Movement : MonoBehaviour
 {
-    public int movespeed = 3;
+    public float movespeed = 3.0f;
     private bool movement = false;
     private bool respawn = false;
     private bool spawned_from_pool = true;
@@ -45,6 +45,10 @@ public class Wall_Movement : MonoBehaviour
     public void SetPoolSpawnFlag(bool spawned)
     {
         spawned_from_pool = spawned;
+    }
+    public void SetMovementSpeed(float speed)
+    {
+        movespeed = speed;
     }
 
     public bool GetPoolSpawnFlag()

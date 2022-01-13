@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Ring_Movement : MonoBehaviour
 {
-    public int movespeed = 3;
+    public float movespeed = 3.0f;
 
     private bool movement = true;
     private bool respawn = false;
@@ -52,6 +52,10 @@ public class Ring_Movement : MonoBehaviour
     public void SetPoolSpawnFlag(bool spawned)
     {
         spawned_from_pool = spawned;
+    }
+    public void SetMovementSpeed(float speed)
+    {
+        movespeed = speed;
     }
 
     public bool GetPoolSpawnFlag()

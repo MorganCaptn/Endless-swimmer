@@ -8,14 +8,12 @@ public class ObstacleManager : MonoBehaviour
     public GameObject[] obstacles;
 
     public GameObject spawn_line;
-    public GameObject next_obstacle_line;
-    public GameObject respawn_line;
 
+    public float obstacle_cooldown = 5.0f;
+    public float spawn_probability = 1.0f;
 
     private GameObject[] instanciated_obstacles;
-    private bool spawn_next_obstacle = true;
-    private NextObstacle next_obst_script;
-    private RespawnObstacle respawn_obst_script;
+    private bool spawn_cooldown = false;
 
     private Vector3 spawn_pos;
     private Vector3 pool_position = new Vector3(40, 40, 0);
@@ -24,37 +22,26 @@ public class ObstacleManager : MonoBehaviour
     void Start()
     {
         CreateObstaclePool();
-        next_obst_script = next_obstacle_line.GetComponent<NextObstacle>();
-        respawn_obst_script = respawn_line.GetComponent<RespawnObstacle>();
         spawn_pos = spawn_line.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Set occurance probaility
+        float probability = Random.Range(0.0f, 1.0f);
+        float threshold = 1.0f - spawn_probability;
 
-        if (respawn_obst_script.GetCollisionStatus())
+        if (probability >= threshold && !spawn_cooldown)
         {
-            //Get object ID of collider and set flag to respawn
-            respawn_obst_script.GetColliderObject().GetComponent<Wall_Movement>().SetRespawnFlag(true);
-            respawn_obst_script.ResetObstacleCollision();
-        }
-
-        if (next_obst_script.GetCollisionStatus())
-        {
-            spawn_next_obstacle = true;
-            next_obst_script.ResetObstacleCollision();
-        }
-
-
-
-        if (spawn_next_obstacle)
-        {
-            spawn_next_obstacle = false;
             SpawnObstacle();
-            
         }
 
+        //Add respawn cooldown
+        if (!spawn_cooldown)
+        {
+            StartCoroutine(CooldownTimer());
+        }
     }
 
     void CreateObstaclePool()
@@ -68,6 +55,14 @@ public class ObstacleManager : MonoBehaviour
             instanciated_obstacles[(i * 2) + 1] = Instantiate(obstacles[i], pool_position, Quaternion.identity);
         }
 
+    }
+
+    private IEnumerator CooldownTimer()
+    {
+        spawn_cooldown = true;
+        // then wait for it's cooldown.
+        yield return new WaitForSeconds(obstacle_cooldown);
+        spawn_cooldown = false;
     }
 
     public void ReturnObstacleToPool()
@@ -105,7 +100,6 @@ public class ObstacleManager : MonoBehaviour
         else
         {
             Debug.Log("Could not find a suitable pick.");
-            spawn_next_obstacle = true;
         }
 
 
@@ -119,9 +113,17 @@ public class ObstacleManager : MonoBehaviour
             script.SetMovement(move);
         }
     }
+    public void SetMovementSpeed(float speed)
+    {
+        for (int i = 0; i < instanciated_obstacles.Length; i++)
+        {
+            Wall_Movement script = instanciated_obstacles[i].GetComponent<Wall_Movement>();
+            script.SetMovementSpeed(speed);
+        }
+    }
 
-   
 
-   
+
+
 
 }
