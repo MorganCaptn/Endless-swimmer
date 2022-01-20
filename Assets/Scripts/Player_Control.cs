@@ -40,6 +40,16 @@ public class Player_Control : MonoBehaviour
     private PlayerModel player_model_script;
     private Quaternion initial_rotation;
  
+    //for swiping control (mobile)
+    private float startpos;
+    private int pos;
+    private float[] positionsset;
+    private float h=0.0f;
+    private float r=0.0f;
+
+    private float touch_time_start, touch_time_finish, time_interval;
+    private Vector2 start_pos, end_pos, direction;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,8 +63,38 @@ public class Player_Control : MonoBehaviour
     void Update()
     {
         is_grounded = false;
-        float h = Input.GetAxis("Horizontal") * movspeed;
-        float r = Input.GetAxis("Horizontal") * rotspeed;
+
+        //float h = Input.GetAxis("Horizontal") * movspeed;
+        //float r = Input.GetAxis("Horizontal") * rotspeed;
+        //Debug.Log(Input.GetAxis("Horizontal"));
+        //SWIPE
+        GetSwipeForce();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            //normalize between -1 and 1
+            float min = -1.0f;
+            float max = 1.0f;
+            float norm = Input.mousePosition.x / Screen.width;
+            norm = norm * (max - min) + min;
+            Debug.Log(norm);
+            // Debug.Log(Screen.width);
+            h = norm * movspeed;
+            r = norm * rotspeed;
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            //normalize between -1 and 1
+            float min = -1.0f;
+            float max = 1.0f;
+            float norm = Input.mousePosition.x / Screen.width;
+            norm = norm * (max - min) + min;
+            Debug.Log(norm);
+            // Debug.Log(Screen.width);
+            h = norm * movspeed;
+            r = norm * rotspeed;
+        }
+
 
         //current position
         Vector3 playerPosition = transform.position;
@@ -100,7 +140,48 @@ public class Player_Control : MonoBehaviour
         }
         
     }
+    private void GetSwipeForce()
+    {
+        //if you touch the screen
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            start_pos = Input.GetTouch(0).position;
+            float min = -1.0f;
+            float max = 1.0f;
+            float norm = start_pos.x / Screen.width;
+            norm = norm * (max - min) + min;
+            h = norm * movspeed;
+            r = norm * rotspeed;
+            //getting touch position and marking time when you touch the screen
+            //touch_time_start = Time.time;
+            //start_pos = Input.GetTouch(0).position;
+        }
 
+        //if you release your finger
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        {
+            h = 0;
+            r = 0;
+            //marking time when you release it
+            //touch_time_finish = Time.time;
+
+            //calculate swipe time interval
+            //time_interval = touch_time_finish - touch_time_start;
+
+            //getting release finger position
+            //end_pos = Input.GetTouch(0).position;
+
+            //calculating swipe direction in 2D space
+            //direction = start_pos - end_pos;
+            //float min = -1.0f;
+            //float max = 1.0f;
+            //float norm = direction.x / Screen.width;
+            //norm = norm * (max - min) + min;
+            //h = norm * movspeed;
+            //r = norm * rotspeed;
+
+        }
+    }
     private void ResetToHeight(float height)
     {
         transform.position = new Vector3(transform.position.x, height, transform.position.z);
@@ -114,7 +195,7 @@ public class Player_Control : MonoBehaviour
         // Check for super jump
         if ((transform.position.y >= (ground_height - height_threshold_for_super_jump)) 
             && (transform.position.y < ground_height) 
-            && Input.GetKeyDown(KeyCode.Space) && !is_grounded)
+            && Input.GetMouseButtonDown(1) && !is_grounded)
         {
             Debug.Log("SuperJump");
             super_jump_active = true;
@@ -193,7 +274,7 @@ public class Player_Control : MonoBehaviour
         }
         
         // Do not allow multiple jumps
-        if (Input.GetKeyDown(KeyCode.Space) && is_grounded)
+        if (Input.GetMouseButtonDown(1) && is_grounded)
         {
             velocity_jump = jump_force;
             jump_active = true;
