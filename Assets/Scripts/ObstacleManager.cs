@@ -9,6 +9,7 @@ public class ObstacleManager : MonoBehaviour
 
     public GameObject spawn_line;
 
+
     public float obstacle_cooldown = 5.0f;
     public float spawn_probability = 1.0f;
 
