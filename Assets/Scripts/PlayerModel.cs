@@ -8,7 +8,7 @@ public class PlayerModel : MonoBehaviour
     private int player_score = 0;
     public Material defeat_material;
     private MeshRenderer my_renderer;
-    private Ring ring_script;
+    
     private LineRenderer line_renderer;
     // Start is called before the first frame update
     void Start()
@@ -47,8 +47,16 @@ public class PlayerModel : MonoBehaviour
 
         if (other.gameObject.tag == "Ring")
         {
+            Ring ring_script;
             ring_script = other.gameObject.GetComponent<Ring>();
             player_score += ring_script.GetPoints();
+        }
+
+        if (other.gameObject.tag == "SuperRing")
+        {
+            SuperRing super_ring_script;
+            super_ring_script = other.gameObject.GetComponent<SuperRing>();
+            player_score += super_ring_script.GetPoints();
         }
 
     }

@@ -770,7 +770,9 @@ MonoBehaviour:
   super_jump_force: 18
   jump_pitch_factor: -0.06
   super_jump_pitch_factor: -0.045
+  super_jump_from_dive_threshold: 10
   dive_force: -12
+  rejump_range: 0.5
   height_threshold_for_super_jump: 2
 --- !u!4 &140491982
 Transform:

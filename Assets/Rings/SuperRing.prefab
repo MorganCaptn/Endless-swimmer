@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 291451436}
   m_Layer: 0
   m_Name: Cylinder
-  m_TagString: Ring
+  m_TagString: SuperRing
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 1122520341778737513}
   m_Layer: 0
   m_Name: SuperRing
-  m_TagString: Ring
+  m_TagString: SuperRing
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
