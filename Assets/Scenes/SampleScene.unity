@@ -768,11 +768,10 @@ MonoBehaviour:
   gravityScale: 5
   jump_force: 12
   super_jump_force: 18
-  jump_pitch_factor: -0.06
-  super_jump_pitch_factor: -0.045
-  super_jump_from_dive_threshold: 10
+  jump_pitch_factor: -0.2
+  super_jump_pitch_factor: -0.2
+  super_jump_from_dive_threshold: 0.2
   dive_force: -12
-  rejump_range: 0.5
   height_threshold_for_super_jump: 2
 --- !u!4 &140491982
 Transform:

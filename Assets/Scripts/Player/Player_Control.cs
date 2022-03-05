@@ -23,89 +23,70 @@ public class Player_Control : MonoBehaviour
     public float super_jump_pitch_factor = -0.2f;
     private float velocity_jump;
     private float velocity_super_jump;
-    private bool jump_active = false;
-    private bool super_jump_active = false;
-    private bool super_jump_engaged = false;
     public float super_jump_from_dive_threshold = -1.0f;
     private bool super_jump_possible = false;
 
     public float dive_force = -20f;
     private float velocity_dive;
-    private bool dive_active = false;
-    private bool dive_engaged = false;
-
     enum states {none, ground, jump, dive, super_jump};
     private states current_move_state = states.ground;
-    private states next_move_engaged = states.none;
     private states trigger_move = states.none;
 
-    public float rejump_range = 0.5f;
     private readonly float ground_height = 1.61f;
     public float height_threshold_for_super_jump = 1.5f;
-    private bool is_grounded = false;
 
     private bool collided_with_obstacle = false;
     private bool movement_allowed = true;
     private PlayerModel player_model_script;
     private Quaternion initial_rotation;
 
-    //for swiping control (mobile)
-    private float startpos;
-    private int pos;
-    private float[] positionsset;
+    private Rect button_area_jump;
+    private Rect debug_button_area_jump;
+
+    private Rect button_area_dive;
+    private Rect debug_button_area_dive;
+
+    
+    //height and rotation of player
     private float h = 0.0f;
     private float r = 0.0f;
 
-    private float touch_time_start, touch_time_finish, time_interval;
-    private Vector2 start_pos, end_pos, direction;
+    private Vector2 start_pos;
 
     // Start is called before the first frame update
     void Start()
     {
-        
-        Debug.Log("Created object!");
-
         initial_rotation = player_model.transform.rotation;
         player_model_script = player_model.gameObject.GetComponent<PlayerModel>();
-    }
+        
+        float button_area_width = Screen.width/3;
+        float button_area_height = Screen.height/10;
 
-    // Update is called once per frame
+        // origin of x and y in bottom left corner
+        button_area_dive = new Rect(Screen.width / 20, Screen.height/20, button_area_width, button_area_height);
+        // GUI box origin of x and y in top left corner
+        debug_button_area_dive = new Rect(Screen.width / 20, Screen.height - 2 * (Screen.height / 20), button_area_width, button_area_height);
+
+        // origin of x and y in bottom left corner
+        button_area_jump = new Rect(Screen.width - button_area_width - Screen.width / 20, Screen.height / 20, button_area_width, button_area_height);
+        // GUI box origin of x and y in top left corner, so the position has to differ to make it match the button area
+        debug_button_area_jump = new Rect(Screen.width - button_area_width - Screen.width / 20, Screen.height - 2 * (Screen.height / 20), button_area_width, button_area_height);
+
+
+    }
+    void OnGUI()
+    {
+        GUI.Box(debug_button_area_jump, "Jump");
+        GUI.Box(debug_button_area_dive, "Dive");
+    }
+        // Update is called once per frame
+    
     void Update()
     {
-        is_grounded = false;
 
-        //float h = Input.GetAxis("Horizontal") * movspeed;
-        //float r = Input.GetAxis("Horizontal") * rotspeed;
-        //Debug.Log(Input.GetAxis("Horizontal"));
-        //SWIPE
-        GetSwipeForce();
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            //normalize between -1 and 1
-            float min = -1.0f;
-            float max = 1.0f;
-            float norm = Input.mousePosition.x / Screen.width;
-            norm = norm * (max - min) + min;
-            Debug.Log(norm);
-            // Debug.Log(Screen.width);
-            h = norm * movspeed;
-            r = norm * rotspeed;
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            //normalize between -1 and 1
-            float min = -1.0f;
-            float max = 1.0f;
-            float norm = Input.mousePosition.x / Screen.width;
-            norm = norm * (max - min) + min;
-            Debug.Log(norm);
-            // Debug.Log(Screen.width);
-            h = norm * movspeed;
-            r = norm * rotspeed;
-        }
-
-
+       
+        GetHorizontalMovement();
+      
         //current position
         Vector3 playerPosition = transform.position;
 
@@ -129,39 +110,15 @@ public class Player_Control : MonoBehaviour
             SuperJump();
         }
 
-        /*
-        Debug.Log(super_jump_active);
-        if (!jump_active && !super_jump_active)
-        {
-            Debug.Log("Dive");
-            Dive();
-        }
-        if (!dive_active && !super_jump_active)
-        {
-            Debug.Log("Jump");
-            Jump();
-        }
-        if (super_jump_active)
-        {
-            Debug.Log("Perform super jump!!");
-            Debug.Log(transform.position.y);
-            SuperJump();
-        }
-        */
-
-
         if (movement_allowed)
         {
             if (playerPosition.x <= max_move_right && playerPosition.x >= max_move_left)
             {
-                //add slight rotation to movement
                 player_model.transform.Rotate(0, r * Time.deltaTime, 0);
                 transform.Translate(h * Time.deltaTime, 0, 0);
             }
             else if (playerPosition.x > max_move_right)
             {
-
-
 
                 transform.position = new Vector3(max_move_right, transform.position.y, transform.position.z);
             }
@@ -171,27 +128,25 @@ public class Player_Control : MonoBehaviour
             }
         }
 
-        //TODO: Add cooldown for input buttons / touch (especially for dive)
-
     }
 
     private void GetMovementState()
     {
-
+        states touch_move = GetButtonInputTouch();
+        
         //FROM GROUND
         if (current_move_state == states.ground)
         {
 
             // -> JUMP
-            if (Input.GetKey(KeyCode.Space))
-            {
+            if (Input.GetKey(KeyCode.Space) || touch_move == states.jump)
+            {               
                 trigger_move = states.jump;
                 current_move_state = states.jump;
-               
             }
 
             // -> DIVE
-            else if (Input.GetKey(KeyCode.DownArrow))
+            else if (Input.GetKey(KeyCode.DownArrow) || touch_move == states.dive)
             {
                 trigger_move = states.dive;
                 current_move_state = states.dive;
@@ -199,60 +154,122 @@ public class Player_Control : MonoBehaviour
 
         }
 
+        //FROM DIVE
         if (current_move_state == states.dive)
         {
             // -> JUMP
-            if (Input.GetKey(KeyCode.Space) && super_jump_possible)
+            if ((Input.GetKey(KeyCode.Space) || touch_move == states.jump) && super_jump_possible)
             {
                 trigger_move = states.super_jump;
                 current_move_state = states.super_jump;
             }
         }
+    }
+  
 
 
-
-
-        }
-    private void GetSwipeForce()
+    private states CheckButtons(Touch touch)
     {
-        //if you touch the screen
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        if (button_area_jump.Contains(touch.position))
         {
-            start_pos = Input.GetTouch(0).position;
-            float min = -1.0f;
-            float max = 1.0f;
-            float norm = start_pos.x / Screen.width;
-            norm = norm * (max - min) + min;
-            h = norm * movspeed;
-            r = norm * rotspeed;
-            //getting touch position and marking time when you touch the screen
-            //touch_time_start = Time.time;
-            //start_pos = Input.GetTouch(0).position;
+
+            if (touch.phase == TouchPhase.Began)
+            {
+
+                return states.jump;
+            }
+
+        }
+        else if (button_area_dive.Contains(touch.position))
+        {
+      
+            if (touch.phase == TouchPhase.Began)
+            {
+
+                return states.dive;
+            }
+        }
+        //Debug.Log("Returned: None!");
+        return states.none;
+  
+    
+    }
+    private states GetButtonInputTouch()
+    {
+        states state = states.none;
+        if (Input.touchCount > 0)
+        {
+            //states state = states.none;
+            
+            var tapCount = Input.touchCount;
+            //Debug.Log(tapCount);
+            for (var i = 0; i < tapCount; i++)
+            {
+                Touch touch = Input.GetTouch(i);
+                if (touch.phase == TouchPhase.Began)
+                {
+                    state = CheckButtons(touch);
+           
+                }
+                    
+                if (state != states.none)
+                    {
+                    break;
+                    }
+            }
         }
 
-        //if you release your finger
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        return state;
+
+    }
+
+    private void GetHorizontalMovement()
+    {
+        if (Input.touchCount > 0)
         {
-            h = 0;
-            r = 0;
-            //marking time when you release it
-            //touch_time_finish = Time.time;
+            var tapCount = Input.touchCount;
+            //Debug.Log(tapCount);
+            for (var i = 0; i < tapCount; i++)
+            {
+                Touch touch = Input.GetTouch(i);
 
-            //calculate swipe time interval
-            //time_interval = touch_time_finish - touch_time_start;
+                if (!(button_area_jump.Contains(touch.position)) && !(button_area_dive.Contains(touch.position)))
+                {
+                    //if you touch the screen
+                    if (touch.phase == TouchPhase.Began)
+                    {
+                        start_pos = touch.position;
+                        float min = -1.0f;
+                        float max = 1.0f;
+                        float norm = start_pos.x / Screen.width;
+                        norm = norm * (max - min) + min;
+                        h = norm * movspeed;
+                        r = norm * rotspeed;
 
-            //getting release finger position
-            //end_pos = Input.GetTouch(0).position;
+                    }
 
-            //calculating swipe direction in 2D space
-            //direction = start_pos - end_pos;
-            //float min = -1.0f;
-            //float max = 1.0f;
-            //float norm = direction.x / Screen.width;
-            //norm = norm * (max - min) + min;
-            //h = norm * movspeed;
-            //r = norm * rotspeed;
+                    //TODO: Maybe different to single touch above
+                    if (touch.phase == TouchPhase.Moved)
+                    {
+                        start_pos = touch.position;
+                        float min = -1.0f;
+                        float max = 1.0f;
+                        float norm = start_pos.x / Screen.width;
+                        norm = norm * (max - min) + min;
+                        h = norm * movspeed;
+                        r = norm * rotspeed;
+                    }
 
+                    //if you release your finger
+                    if (touch.phase == TouchPhase.Ended)
+                    {
+                        h = 0;
+                        r = 0;
+                    }
+
+                }
+
+            }
         }
     }
     private void ResetToHeight(float height)
