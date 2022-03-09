@@ -25,6 +25,7 @@ public class Landscape : MonoBehaviour
             //Assuming this script always has a parent with the ring movement script attached
             Movement script = gameObject.transform.GetComponent<Movement>();
             script.SetRespawnFlag(true);
+            script.SetMovement(false);
 
         }
     }

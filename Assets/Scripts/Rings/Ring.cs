@@ -10,6 +10,7 @@ public class Ring : MonoBehaviour
     private Material default_material;
     private MeshRenderer my_renderer;
     private LineRenderer line_renderer;
+    private Ring_Movement script;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +22,8 @@ public class Ring : MonoBehaviour
         line_renderer.endColor = Color.yellow;
         line_renderer.startWidth = 0.04f;
         line_renderer.endWidth = 0.04f;
-
+        //Assuming this script always has a parent with the ring movement script attached
+        script = gameObject.transform.parent.gameObject.GetComponent<Ring_Movement>();
     }
 
     // Update is called once per frame
@@ -44,7 +46,8 @@ public class Ring : MonoBehaviour
 
         private void OnTriggerEnter(Collider other)
     {
-        
+       
+
         if (other.gameObject.tag == "Player")
         {
             Debug.Log("Ring collided with player!");
@@ -52,6 +55,21 @@ public class Ring : MonoBehaviour
             this.Disappear();
 
         }
+        if (other.gameObject.tag == "Wall")
+        {
+          
+
+            // Only correct position in front of player, not behind. Otherwise ring might be pushed back to screen due to multiple wall collisions.
+            Vector3 world_pos = transform.TransformPoint(Vector3.zero);
+            Debug.Log(world_pos.z);
+            if (world_pos.z > 0.0f)
+            {
+                Debug.Log("Ring position has to change due to collision with a wall!");
+                transform.position = transform.position + new Vector3(0.0f, 0.0f, 2.0f);
+            }
+          
+        }
+
         if (other.gameObject.tag == "Respawn")
         {
 
@@ -59,10 +77,9 @@ public class Ring : MonoBehaviour
             Debug.Log("Ring collided with respawn line!");
             collected = false;
             this.Appear();
-            //Assuming this script always has a parent with the ring movement script attached
-            Ring_Movement script = gameObject.transform.parent.gameObject.GetComponent<Ring_Movement>();
+            
             script.SetRespawnFlag(true);
-
+            script.SetMovement(false);
         }
     }
 

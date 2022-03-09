@@ -56,7 +56,7 @@ public class LandscapeManager : MonoBehaviour
 
     private IEnumerator CooldownTimer()
     {
-        Debug.Log("TIMER!!");
+        //Debug.Log("TIMER!!");
         next_landscape_element = false;
         // then wait for it's cooldown.
         yield return new WaitForSeconds(next_landscape_cooldown);
@@ -98,7 +98,7 @@ public class LandscapeManager : MonoBehaviour
         //Check if pick is from pool
         if (script.GetPoolSpawnFlag())
         {
-            Debug.Log("Pick is from pool.");
+            //Debug.Log("Pick is from pool.");
             instanciated_landscapes[random_pick].transform.position = landscape_spawn_pos;
             script.SetMovement(true);
             script.SetPoolSpawnFlag(false);
@@ -107,7 +107,7 @@ public class LandscapeManager : MonoBehaviour
         //Check if obstacle can already be respawned
         else if (script.GetRespawnFlag())
         {
-            Debug.Log("Pick can be respawned");
+            //Debug.Log("Pick can be respawned");
             instanciated_landscapes[random_pick].transform.position = landscape_spawn_pos;
             script.SetMovement(true);
             script.SetRespawnFlag(false);
@@ -116,7 +116,7 @@ public class LandscapeManager : MonoBehaviour
         //Try another pick
         else
         {
-            Debug.Log("Could not find a suitable pick.");
+            //Debug.Log("Could not find a suitable pick.");
             landscape_spawned = false;
         }
         return landscape_spawned;

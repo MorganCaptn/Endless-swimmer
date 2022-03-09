@@ -9,12 +9,16 @@ public class ObstacleManager : MonoBehaviour
 
     public GameObject spawn_line;
 
+    public GameObject next_obstacle_line;
+    
 
     public float obstacle_cooldown = 5.0f;
     public float spawn_probability = 1.0f;
 
     private GameObject[] instanciated_obstacles;
     private bool spawn_cooldown = false;
+
+    private NextObstacle next_obstacle_script;
 
     private Vector3 spawn_pos;
     private Vector3 pool_position = new Vector3(40, 40, 0);
@@ -24,6 +28,8 @@ public class ObstacleManager : MonoBehaviour
     {
         CreateObstaclePool();
         spawn_pos = spawn_line.transform.position;
+        next_obstacle_script = next_obstacle_line.GetComponent<NextObstacle>();
+        SpawnObstacle();
     }
 
     // Update is called once per frame
@@ -32,6 +38,18 @@ public class ObstacleManager : MonoBehaviour
         //Set occurance probaility
         float probability = Random.Range(0.0f, 1.0f);
         float threshold = 1.0f - spawn_probability;
+
+        if(next_obstacle_script.GetCollisionStatus())
+        {
+            SpawnObstacle();
+            
+        }
+        
+        /*
+        if (probability >= threshold && !spawn_cooldown)
+        {
+            SpawnObstacle();
+        }
 
         if (probability >= threshold && !spawn_cooldown)
         {
@@ -43,6 +61,7 @@ public class ObstacleManager : MonoBehaviour
         {
             StartCoroutine(CooldownTimer());
         }
+        */
     }
 
     void CreateObstaclePool()
@@ -88,6 +107,7 @@ public class ObstacleManager : MonoBehaviour
             instanciated_obstacles[random_pick].transform.position = spawn_pos;
             script.SetMovement(true);
             script.SetPoolSpawnFlag(false);
+            next_obstacle_script.ResetObstacleCollision();
         }
         //Check if obstacle can already be respawned
         else if (script.GetRespawnFlag())
@@ -96,6 +116,7 @@ public class ObstacleManager : MonoBehaviour
             instanciated_obstacles[random_pick].transform.position = spawn_pos;
             script.SetMovement(true);
             script.SetRespawnFlag(false);
+            next_obstacle_script.ResetObstacleCollision();
         }
         //Try another pick
         else

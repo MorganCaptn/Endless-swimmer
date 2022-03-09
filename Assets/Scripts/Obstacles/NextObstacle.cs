@@ -17,14 +17,14 @@ public class NextObstacle : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Wall")
+        if (other.gameObject.tag == "Obstacle")
         {
             if (!obstacle_collided)
             {
                 obstacle_collided = true;
-                Debug.Log("Wall collided with next obstacle line!");
+                Debug.Log("Obstacle passed the next obstacle line!");
             }
         }
     }

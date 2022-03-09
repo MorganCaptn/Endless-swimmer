@@ -16,16 +16,19 @@ public class Obstacle : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
+        
         if (other.gameObject.tag == "Respawn")
         {
             //Change back to original appearance
             Debug.Log("Obstacle collided with respawn line! Reset spawn flag.");
             //Assuming this script always has a parent with the ring movement script attached
-            Wall_Movement script = gameObject.transform.parent.gameObject.GetComponent<Wall_Movement>();
+            Wall_Movement script = gameObject.transform.gameObject.GetComponent<Wall_Movement>();
             script.SetRespawnFlag(true);
+            script.SetMovement(false);
         }
+        
     }
 
 }

@@ -38,7 +38,9 @@ public class RingManager : MonoBehaviour
         float ring_probability = Random.Range(0.0f, 1.0f);
         float super_ring_probability = Random.Range(0.0f, 1.0f);
         float threshold = 1.0f - ring_spawn_probability;
-  
+
+     
+
         if (ring_probability >= threshold && !ring_spawn_cooldown)
         {
             SpawnRing();
@@ -63,6 +65,7 @@ public class RingManager : MonoBehaviour
 
 
     }
+
 
     void CreateRingPool()
     {

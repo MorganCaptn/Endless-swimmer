@@ -9,6 +9,7 @@ TagManager:
   - Ring
   - Wall
   - SuperRing
+  - Obstacle
   layers:
   - Default
   - TransparentFX

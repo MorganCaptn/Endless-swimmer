@@ -18,19 +18,24 @@ public class RespawnObstacle : MonoBehaviour
     {
         
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Wall")
+        /*
+        if (other.gameObject.tag == "Obstacle")
         {
-            Debug.Log("Wall collided with the cleanup line!!!!");
+            Debug.Log("Obstacle passed the cleanup line!");
             if (!obstacle_collided)
             {
                 obstacle_collided = true;
                 collision_object = other.gameObject;
-                Debug.Log("Wall collided with the cleanup line!");
+                if (collision_object.TryGetComponent<Wall_Movement>(out var script))
+                {
+                    Debug.Log("Resetted the spawn flag!");
+                    script.SetRespawnFlag(true);
+                }
             }
         }
-
+        */
     }
 
     public bool GetCollisionStatus()
