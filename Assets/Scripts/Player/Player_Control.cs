@@ -358,15 +358,6 @@ public class Player_Control : MonoBehaviour
 
     }
 
-    
-
-
-
-    public bool GetCollisionStatus()
-    {
-        return collided_with_obstacle;
-    }
-
     private void RotateBackToCenter(Quaternion current_rotation)
     {
         player_model.transform.rotation = Quaternion.Lerp(current_rotation, initial_rotation, rotbackspeed * Time.deltaTime);

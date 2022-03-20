@@ -7,7 +7,7 @@ public class StartGame : MonoBehaviour
     public void Scene1()
     {
         Debug.Log("Load Scene");
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("EndlessMode");
     }
     
 }

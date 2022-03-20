@@ -77,12 +77,16 @@ public class RingManager : MonoBehaviour
         {
             instanciated_rings[i * 2] = Instantiate(rings[i], pool_position, Quaternion.identity);
             instanciated_rings[(i * 2) + 1] = Instantiate(rings[i], pool_position, Quaternion.identity);
+            instanciated_rings[i * 2].SetActive(false);
+            instanciated_rings[(i * 2) + 1].SetActive(false);
         }
 
         for (int i = 0; i < super_rings.Length; i++)
         {
             instanciated_super_rings[i * 2] = Instantiate(super_rings[i], pool_position, Quaternion.identity);
             instanciated_super_rings[(i * 2) + 1] = Instantiate(super_rings[i], pool_position, Quaternion.identity);
+            instanciated_super_rings[i * 2].SetActive(false);
+            instanciated_super_rings[(i * 2) + 1].SetActive(false);
         }
 
     }
@@ -111,30 +115,26 @@ public class RingManager : MonoBehaviour
     public void SpawnRing()
     {
 
+        //TODO: Fix ring appearance behaviour
         //get random numbers
         int random_pick = Random.Range(0, instanciated_rings.Length);
         float random_height = Random.Range(-1.8f, 3.8f);
         float random_width = Random.Range(-3.8f, 3.8f);
         Vector3 instance_pos = new Vector3(random_width, random_height, spawn_pos.z);
         //Access the obstacle script
-        Ring_Movement script = instanciated_rings[random_pick].GetComponent<Ring_Movement>();
+        Movement script = instanciated_rings[random_pick].GetComponent<Movement>();
 
-        //Check if pick is from pool
-        if (script.GetPoolSpawnFlag())
+
+        if (!instanciated_rings[random_pick].activeSelf)
         {
             Debug.Log("Pick is from pool.");
+            instanciated_rings[random_pick].SetActive(true);
             instanciated_rings[random_pick].transform.position = instance_pos;
             script.SetMovement(true);
             script.SetPoolSpawnFlag(false);
+
         }
-        //Check if obstacle can already be respawned
-        else if (script.GetRespawnFlag())
-        {
-            Debug.Log("Pick can be respawned");
-            instanciated_rings[random_pick].transform.position = instance_pos;
-            script.SetMovement(true);
-            script.SetRespawnFlag(false);
-        }
+
         //Try another pick
         else
         {
@@ -153,9 +153,19 @@ public class RingManager : MonoBehaviour
         float random_width = Random.Range(-3.8f, 3.8f);
         Vector3 instance_pos = new Vector3(random_width, height, spawn_pos.z);
         //Access the obstacle script
-        Ring_Movement script = instanciated_super_rings[random_pick].GetComponent<Ring_Movement>();
+        Movement script = instanciated_super_rings[random_pick].GetComponent<Movement>();
 
+
+        if (!instanciated_super_rings[random_pick].activeSelf)
+        {
+            Debug.Log("Pick is from pool.");
+            instanciated_super_rings[random_pick].SetActive(true);
+            instanciated_super_rings[random_pick].transform.position = instance_pos;
+            script.SetMovement(true);
+            script.SetPoolSpawnFlag(false);
+        }
         //Check if pick is from pool
+        /*
         if (script.GetPoolSpawnFlag())
         {
             Debug.Log("Pick is from pool.");
@@ -171,6 +181,7 @@ public class RingManager : MonoBehaviour
             script.SetMovement(true);
             script.SetRespawnFlag(false);
         }
+        */
         //Try another pick
         else
         {
@@ -183,13 +194,13 @@ public class RingManager : MonoBehaviour
     {
         for (int i = 0; i < instanciated_rings.Length; i++)
         {
-            Ring_Movement script = instanciated_rings[i].GetComponent<Ring_Movement>();
+            Movement script = instanciated_rings[i].GetComponent<Movement>();
             script.SetMovement(move);
         }
 
         for (int i = 0; i < instanciated_super_rings.Length; i++)
         {
-            Ring_Movement script = instanciated_super_rings[i].GetComponent<Ring_Movement>();
+            Movement script = instanciated_super_rings[i].GetComponent<Movement>();
             script.SetMovement(move);
         }
     }
@@ -197,13 +208,13 @@ public class RingManager : MonoBehaviour
     {
         for (int i = 0; i < instanciated_rings.Length; i++)
         {
-            Ring_Movement script = instanciated_rings[i].GetComponent<Ring_Movement>();
+            Movement script = instanciated_rings[i].GetComponent<Movement>();
             script.SetMovementSpeed(speed);
         }
 
         for (int i = 0; i < instanciated_super_rings.Length; i++)
         {
-            Ring_Movement script = instanciated_super_rings[i].GetComponent<Ring_Movement>();
+            Movement script = instanciated_super_rings[i].GetComponent<Movement>();
             script.SetMovementSpeed(speed);
         }
     }

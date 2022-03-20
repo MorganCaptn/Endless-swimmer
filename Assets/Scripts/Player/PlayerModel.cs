@@ -6,6 +6,7 @@ public class PlayerModel : MonoBehaviour
 {
     private bool player_collided;
     private int player_score = 0;
+    private int player_level = 0;
     public Material defeat_material;
     private MeshRenderer my_renderer;
     
@@ -39,9 +40,9 @@ public class PlayerModel : MonoBehaviour
         {
             if (!player_collided)
             {
-                player_collided = true;
                 my_renderer.material = defeat_material;
                 Debug.Log("Player collided with obstacle!");
+                SetCollisionStatus(true);
             }
         }
 
@@ -59,6 +60,30 @@ public class PlayerModel : MonoBehaviour
             player_score += super_ring_script.GetPoints();
         }
 
+        if (other.gameObject.tag == "LevelUp")
+        {
+            Debug.Log("Player collided with level up line.");
+            IncreaseLevel(1);
+        }
+
+    }
+
+    public int GetPlayerLevel()
+    {
+        return player_level;
+    }
+
+    private void IncreaseLevel(int level_up)
+    {
+        if (level_up > 0)
+        {
+            player_level += level_up;
+        }
+    }
+
+    public void SetCollisionStatus(bool is_collided)
+    {
+        player_collided = is_collided;
     }
 
     public bool GetCollisionStatus()

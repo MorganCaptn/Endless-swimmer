@@ -27,6 +27,7 @@ public class Obstacle : MonoBehaviour
             Wall_Movement script = gameObject.transform.gameObject.GetComponent<Wall_Movement>();
             script.SetRespawnFlag(true);
             script.SetMovement(false);
+            gameObject.SetActive(false);
         }
         
     }

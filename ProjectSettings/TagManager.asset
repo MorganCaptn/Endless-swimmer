@@ -10,6 +10,9 @@ TagManager:
   - Wall
   - SuperRing
   - Obstacle
+  - LevelUp
+  - Ring_BB
+  - SpawnLine
   layers:
   - Default
   - TransparentFX

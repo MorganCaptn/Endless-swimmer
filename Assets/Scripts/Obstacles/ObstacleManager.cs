@@ -10,7 +10,7 @@ public class ObstacleManager : MonoBehaviour
     public GameObject spawn_line;
 
     public GameObject next_obstacle_line;
-    
+
 
     public float obstacle_cooldown = 5.0f;
     public float spawn_probability = 1.0f;
@@ -39,12 +39,12 @@ public class ObstacleManager : MonoBehaviour
         float probability = Random.Range(0.0f, 1.0f);
         float threshold = 1.0f - spawn_probability;
 
-        if(next_obstacle_script.GetCollisionStatus())
+        if (next_obstacle_script.GetCollisionStatus())
         {
             SpawnObstacle();
-            
+
         }
-        
+
         /*
         if (probability >= threshold && !spawn_cooldown)
         {
@@ -73,6 +73,8 @@ public class ObstacleManager : MonoBehaviour
         {
             instanciated_obstacles[i * 2] = Instantiate(obstacles[i], pool_position, Quaternion.identity);
             instanciated_obstacles[(i * 2) + 1] = Instantiate(obstacles[i], pool_position, Quaternion.identity);
+            instanciated_obstacles[i * 2].SetActive(false);
+            instanciated_obstacles[(i * 2) + 1].SetActive(false);
         }
 
     }
@@ -92,6 +94,8 @@ public class ObstacleManager : MonoBehaviour
 
     public void SpawnObstacle()
     {
+        //TODO: Consider game level for choosing more easy/difficult obstacles
+
 
         //get a random number
         int random_pick = Random.Range(0, instanciated_obstacles.Length);
@@ -99,31 +103,24 @@ public class ObstacleManager : MonoBehaviour
         //Access the obstacle script
         Wall_Movement script = instanciated_obstacles[random_pick].GetComponent<Wall_Movement>();
 
-
-        //Check if pick is from pool
-        if (script.GetPoolSpawnFlag())
+        if (!instanciated_obstacles[random_pick].activeSelf)
         {
-            Debug.Log("Pick is form pool.");
+            instanciated_obstacles[random_pick].SetActive(true);
             instanciated_obstacles[random_pick].transform.position = spawn_pos;
             script.SetMovement(true);
             script.SetPoolSpawnFlag(false);
             next_obstacle_script.ResetObstacleCollision();
         }
-        //Check if obstacle can already be respawned
-        else if (script.GetRespawnFlag())
-        {
-            Debug.Log("Pick can be respawned");
-            instanciated_obstacles[random_pick].transform.position = spawn_pos;
-            script.SetMovement(true);
-            script.SetRespawnFlag(false);
-            next_obstacle_script.ResetObstacleCollision();
-        }
-        //Try another pick
         else
         {
             Debug.Log("Could not find a suitable pick.");
         }
 
+
+    }
+
+    public void SetSpawnLevel(int level)
+    {
 
     }
 

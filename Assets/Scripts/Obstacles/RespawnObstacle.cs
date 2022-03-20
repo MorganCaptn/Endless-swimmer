@@ -49,16 +49,16 @@ public class RespawnObstacle : MonoBehaviour
 
         if (collision_object.TryGetComponent<Wall_Movement>(out var script))
         {
-            Debug.Log("GameObject has wallmovement script");
+            //Debug.Log("GameObject has wallmovement script");
             return collision_object;
         }
 
         else if (collision_object.transform.parent.gameObject.TryGetComponent<Wall_Movement>(out script))
         {
-            Debug.Log("GameObject PARENT has wallmovement script");
+            //Debug.Log("GameObject PARENT has wallmovement script");
             return collision_object.transform.parent.gameObject;
         }
-        Debug.Log("Retunred invalid respawn object.");
+        //Debug.Log("Retunred invalid respawn object.");
         return collision_object;
 
    

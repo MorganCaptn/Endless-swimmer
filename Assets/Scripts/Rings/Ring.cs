@@ -70,16 +70,13 @@ public class Ring : MonoBehaviour
           
         }
 
-        if (other.gameObject.tag == "Respawn")
+        if (other.gameObject.tag == "SpawnLine")
         {
 
             //Change back to original appearance
-            Debug.Log("Ring collided with respawn line!");
+            Debug.Log("Change back to original appearance!");
             collected = false;
             this.Appear();
-            
-            script.SetRespawnFlag(true);
-            script.SetMovement(false);
         }
     }
 

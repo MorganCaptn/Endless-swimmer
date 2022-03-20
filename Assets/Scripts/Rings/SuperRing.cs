@@ -62,6 +62,8 @@ public class SuperRing : MonoBehaviour
             //Assuming this script always has a parent with the ring movement script attached
             Ring_Movement script = gameObject.transform.parent.gameObject.GetComponent<Ring_Movement>();
             script.SetRespawnFlag(true);
+            script.SetMovement(false);
+            gameObject.SetActive(false);
 
         }
     }

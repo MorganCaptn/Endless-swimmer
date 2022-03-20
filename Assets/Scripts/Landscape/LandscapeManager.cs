@@ -75,6 +75,8 @@ public class LandscapeManager : MonoBehaviour
         {
             instanciated_landscapes_left[i] = Instantiate(landscape_elements[i], pool_position, Quaternion.identity);
             instanciated_landscapes_right[i] = Instantiate(landscape_elements[i], pool_position, Quaternion.identity);
+            instanciated_landscapes_left[i].SetActive(false);
+            instanciated_landscapes_right[i].SetActive(false);
 
         }
 
@@ -94,7 +96,16 @@ public class LandscapeManager : MonoBehaviour
         //Access the obstacle script
         Movement script = instanciated_landscapes[random_pick].GetComponent<Movement>();
         
-
+        if (!instanciated_landscapes[random_pick].activeSelf)
+        {
+            //Debug.Log("Pick is from pool.");
+            instanciated_landscapes[random_pick].SetActive(true);
+            instanciated_landscapes[random_pick].transform.position = landscape_spawn_pos;
+            script.SetMovement(true);
+            script.SetPoolSpawnFlag(false);
+            landscape_spawned = true;
+        }
+        /*
         //Check if pick is from pool
         if (script.GetPoolSpawnFlag())
         {
@@ -113,6 +124,8 @@ public class LandscapeManager : MonoBehaviour
             script.SetRespawnFlag(false);
             landscape_spawned = true;
         }
+
+        */
         //Try another pick
         else
         {
@@ -121,5 +134,35 @@ public class LandscapeManager : MonoBehaviour
         }
         return landscape_spawned;
 
+    }
+
+
+    public void SetMovement(bool move)
+    {
+        for (int i = 0; i < instanciated_landscapes_left.Length; i++)
+        {
+            Movement script = instanciated_landscapes_left[i].GetComponent<Movement>();
+            script.SetMovement(move);
+        }
+
+        for (int i = 0; i < instanciated_landscapes_right.Length; i++)
+        {
+            Movement script = instanciated_landscapes_right[i].GetComponent<Movement>();
+            script.SetMovement(move);
+        }
+    }
+    public void SetMovementSpeed(float speed)
+    {
+        for (int i = 0; i < instanciated_landscapes_left.Length; i++)
+        {
+            Movement script = instanciated_landscapes_left[i].GetComponent<Movement>();
+            script.SetMovementSpeed(speed);
+        }
+
+        for (int i = 0; i < instanciated_landscapes_right.Length; i++)
+        {
+            Movement script = instanciated_landscapes_right[i].GetComponent<Movement>();
+            script.SetMovementSpeed(speed);
+        }
     }
 }
