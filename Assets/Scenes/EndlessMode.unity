@@ -2376,7 +2376,6 @@ GameObject:
   m_Component:
   - component: {fileID: 620957254}
   - component: {fileID: 620957253}
-  - component: {fileID: 620957252}
   m_Layer: 0
   m_Name: RespawnLine
   m_TagString: Respawn
@@ -2384,18 +2383,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &620957252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 620957251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fad60eaacc71334e84c9cfe01c878f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &620957253
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4038,6 +4025,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ab6bd1a18fbae4b91a0b4d45d3bc2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstacle_passed: 0
+  obstacles_for_next_level: 5
   score: 0
   player_object: {fileID: 140491980}
   player_model: {fileID: 649871204}
@@ -4049,7 +4038,7 @@ MonoBehaviour:
   maximum_speed: 12
   level: 0
   player_invincible: 1
-  start_level: 50
+  start_level: 0
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4065,7 +4054,10 @@ MonoBehaviour:
   obstacles:
   - {fileID: 5815014052392238191, guid: 19ef27ccadb41634ebb03cd30c167b97, type: 3}
   - {fileID: 5815014052392238191, guid: 19ef27ccadb41634ebb03cd30c167b97, type: 3}
+  - {fileID: 5381483414356435361, guid: b48848e0f81f3cc4198ff06114d9e22a, type: 3}
+  - {fileID: 5381483414356435361, guid: b48848e0f81f3cc4198ff06114d9e22a, type: 3}
   spawn_line: {fileID: 71512905}
+  level_up_line: {fileID: 3513219663393834622, guid: 7a831de90638de44f9f5aedeed9aff61, type: 3}
   next_obstacle_line: {fileID: 1238423077}
   obstacle_cooldown: 3
   spawn_probability: 1

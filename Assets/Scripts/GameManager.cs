@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public int obstacle_passed;
+    public int obstacles_for_next_level = 5;
     public int score;
     
     public GameObject player_object;
@@ -44,6 +46,7 @@ public class GameManager : MonoBehaviour
         player_control = player_object.GetComponent<Player_Control>();
         player = player_model.GetComponent<PlayerModel>();
 
+        
         level = start_level;
         
     }
@@ -53,18 +56,26 @@ public class GameManager : MonoBehaviour
     {
 
         score = player.GetPlayerScore();
-        if (start_level == 1)
+        obstacle_passed = player.GetObstacleCount();
+        if (start_level == 0)
         {
             level = player.GetPlayerLevel();
+           
         }
       
-
+        
         if (current_level != level)
         {
             ChangeDifficulty(level);
+            
         }
-
-    
+     
+        if (obstacle_passed  == obstacles_for_next_level)
+        {
+            Debug.Log("Engaging LevelUp.");
+            obs_manager.EngageNextLevel();
+            obstacles_for_next_level += 5;
+        }
 
         if (player.GetCollisionStatus() && !player_invincible)
         {
@@ -112,13 +123,38 @@ public class GameManager : MonoBehaviour
             landscape_manager.SetMovementSpeed(maximum_speed);
         }
 
-
-        obs_manager.SetSpawnLevel(game_level);
         //OBSTACLES
+        
+        // If level gets higher, more difficult obstacles will be spawned
+        if (game_level >= 0 && game_level <= 4)
+        {
+            Debug.Log("Set range to 0, 5");
+            obs_manager.SetLevelRange(0, 5);
+        }
 
-        //TODO: Set level threshold, to spawn more easy/challenging obstacles
+        if (game_level >= 5 && game_level <= 10)
+        {
+            Debug.Log("Set range to 0, 10");
+            obs_manager.SetLevelRange(0, 10);
+        }
 
+        if (game_level >= 11 && game_level <= 20)
+        {
+            Debug.Log("Set range to 0, 20");
+            obs_manager.SetLevelRange(0, 20);
+        }
 
+        if (game_level >= 21 && game_level <= 25)
+        {
+            Debug.Log("Set range to 5, 25");
+            obs_manager.SetLevelRange(5, 25);
+        }
+
+        if (game_level >= 50)
+        {
+            Debug.Log("Set range to 25, 50");
+            obs_manager.SetLevelRange(25, 50);
+        }
 
 
         current_level = game_level;

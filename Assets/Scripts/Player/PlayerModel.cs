@@ -7,6 +7,7 @@ public class PlayerModel : MonoBehaviour
     private bool player_collided;
     private int player_score = 0;
     private int player_level = 0;
+    private int obstacle_passed = 0;
     public Material defeat_material;
     private MeshRenderer my_renderer;
     
@@ -68,6 +69,20 @@ public class PlayerModel : MonoBehaviour
 
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Obstacle")
+        {
+            obstacle_passed += 1;
+        }
+
+    }
+
+    public int GetObstacleCount()
+    {
+        return obstacle_passed;
+    }
+
     public int GetPlayerLevel()
     {
         return player_level;
@@ -78,6 +93,7 @@ public class PlayerModel : MonoBehaviour
         if (level_up > 0)
         {
             player_level += level_up;
+            Debug.Log("Player Level: " + player_level.ToString());
         }
     }
 

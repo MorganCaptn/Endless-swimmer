@@ -127,7 +127,7 @@ public class RingManager : MonoBehaviour
 
         if (!instanciated_rings[random_pick].activeSelf)
         {
-            Debug.Log("Pick is from pool.");
+            //Debug.Log("Pick is from pool.");
             instanciated_rings[random_pick].SetActive(true);
             instanciated_rings[random_pick].transform.position = instance_pos;
             script.SetMovement(true);
@@ -138,7 +138,7 @@ public class RingManager : MonoBehaviour
         //Try another pick
         else
         {
-            Debug.Log("Could not find a suitable pick.");
+           // Debug.Log("Could not find a suitable pick.");
         }
 
     }
@@ -158,7 +158,7 @@ public class RingManager : MonoBehaviour
 
         if (!instanciated_super_rings[random_pick].activeSelf)
         {
-            Debug.Log("Pick is from pool.");
+            //Debug.Log("Pick is from pool.");
             instanciated_super_rings[random_pick].SetActive(true);
             instanciated_super_rings[random_pick].transform.position = instance_pos;
             script.SetMovement(true);
@@ -185,7 +185,7 @@ public class RingManager : MonoBehaviour
         //Try another pick
         else
         {
-            Debug.Log("Could not find a suitable pick.");
+           // Debug.Log("Could not find a suitable pick.");
         }
 
     }

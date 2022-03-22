@@ -35,7 +35,7 @@ public class Player_Control : MonoBehaviour
     private readonly float ground_height = 1.61f;
     public float height_threshold_for_super_jump = 1.5f;
 
-    private bool collided_with_obstacle = false;
+  
     private bool movement_allowed = true;
     private PlayerModel player_model_script;
     private Quaternion initial_rotation;

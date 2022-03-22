@@ -4,21 +4,26 @@ using UnityEngine;
 
 public class ObstacleManager : MonoBehaviour
 {
-    //TODO: Do the same stuff like in the RingManager
     public GameObject[] obstacles;
 
     public GameObject spawn_line;
-
+    public GameObject level_up_line;
     public GameObject next_obstacle_line;
+
+    private int max_level = 5;
+    private int min_level = 0;
 
 
     public float obstacle_cooldown = 5.0f;
     public float spawn_probability = 1.0f;
 
     private GameObject[] instanciated_obstacles;
-    private bool spawn_cooldown = false;
+    private GameObject instanciated_level_up_line;
 
     private NextObstacle next_obstacle_script;
+    public bool initial_spawn = false;
+    public bool spawn_next_level = false;
+    public bool stop_spawning = false;
 
     private Vector3 spawn_pos;
     private Vector3 pool_position = new Vector3(40, 40, 0);
@@ -30,6 +35,9 @@ public class ObstacleManager : MonoBehaviour
         spawn_pos = spawn_line.transform.position;
         next_obstacle_script = next_obstacle_line.GetComponent<NextObstacle>();
         SpawnObstacle();
+
+        instanciated_level_up_line = Instantiate(level_up_line, pool_position, Quaternion.identity);
+        instanciated_level_up_line.SetActive(false);
     }
 
     // Update is called once per frame
@@ -39,29 +47,55 @@ public class ObstacleManager : MonoBehaviour
         float probability = Random.Range(0.0f, 1.0f);
         float threshold = 1.0f - spawn_probability;
 
-        if (next_obstacle_script.GetCollisionStatus())
+        //CheckLevelUp();
+        
+        if((next_obstacle_script.GetObstacleCollisionStatus() || initial_spawn == false))
         {
-            SpawnObstacle();
+            if (!spawn_next_level && next_obstacle_script.GetLevelUpCollisionStatus())
+            {
+                SpawnObstacle();
+            }
+            else
+            {
+               
+                    SpawnLevelUp();
+               
+            }
+            
+        }      
+    }
 
+    private void CheckLevelUp()
+    {
+        if (spawn_next_level && next_obstacle_script.GetObstacleCollisionStatus())
+        {
+                Debug.Log("Spawning LevelUp Line");
+                SpawnLevelUp();
         }
 
-        /*
-        if (probability >= threshold && !spawn_cooldown)
+        if (instanciated_level_up_line.activeSelf)
         {
-            SpawnObstacle();
+            //Wait for level up line to pass the next spawn line
+            if (next_obstacle_script.GetLevelUpCollisionStatus())
+            {
+                stop_spawning = false;
+            }
         }
+    }
+    public void EngageNextLevel()
+    {
+        if (!spawn_next_level)
+        {
+            spawn_next_level = true;
+            stop_spawning = true;
+        }
+      
+    }
 
-        if (probability >= threshold && !spawn_cooldown)
-        {
-            SpawnObstacle();
-        }
-
-        //Add respawn cooldown
-        if (!spawn_cooldown)
-        {
-            StartCoroutine(CooldownTimer());
-        }
-        */
+    public void SetLevelRange(int min, int max)
+    {
+        min_level = min;
+        max_level = max;
     }
 
     void CreateObstaclePool()
@@ -78,38 +112,44 @@ public class ObstacleManager : MonoBehaviour
         }
 
     }
-
-    private IEnumerator CooldownTimer()
-    {
-        spawn_cooldown = true;
-        // then wait for it's cooldown.
-        yield return new WaitForSeconds(obstacle_cooldown);
-        spawn_cooldown = false;
-    }
-
-    public void ReturnObstacleToPool()
+    private void SpawnLevelUp()
     {
 
-    }
+        if (!instanciated_level_up_line.activeSelf)
+        {
+            Movement movement_script = instanciated_level_up_line.GetComponent<Movement>();
 
+            instanciated_level_up_line.SetActive(true);
+            instanciated_level_up_line.transform.position = spawn_pos;
+            movement_script.SetMovement(true);
+            next_obstacle_script.ResetLevelUpCollision();
+            spawn_next_level = false;
+        }
+ 
+    }
     public void SpawnObstacle()
     {
-        //TODO: Consider game level for choosing more easy/difficult obstacles
-
 
         //get a random number
         int random_pick = Random.Range(0, instanciated_obstacles.Length);
 
         //Access the obstacle script
-        Wall_Movement script = instanciated_obstacles[random_pick].GetComponent<Wall_Movement>();
+        Movement movement_script = instanciated_obstacles[random_pick].GetComponent<Movement>();
+        Obstacle obstacle_script = instanciated_obstacles[random_pick].GetComponent<Obstacle>();
+        int obstacle_level = obstacle_script.GetDifficultyLevel();
 
-        if (!instanciated_obstacles[random_pick].activeSelf)
+        Debug.Log(max_level);
+        Debug.Log(min_level);
+
+        if (!instanciated_obstacles[random_pick].activeSelf &&
+            (obstacle_level <= max_level) &&
+            (obstacle_level >= min_level))
         {
             instanciated_obstacles[random_pick].SetActive(true);
             instanciated_obstacles[random_pick].transform.position = spawn_pos;
-            script.SetMovement(true);
-            script.SetPoolSpawnFlag(false);
+            movement_script.SetMovement(true);
             next_obstacle_script.ResetObstacleCollision();
+            initial_spawn = true;
         }
         else
         {
@@ -118,27 +158,27 @@ public class ObstacleManager : MonoBehaviour
 
 
     }
-
-    public void SetSpawnLevel(int level)
-    {
-
-    }
-
     public void SetMovement(bool move)
     {
         for (int i = 0; i < instanciated_obstacles.Length; i++)
         {
-            Wall_Movement script = instanciated_obstacles[i].GetComponent<Wall_Movement>();
-            script.SetMovement(move);
+            Movement movement_script = instanciated_obstacles[i].GetComponent<Movement>();
+            movement_script.SetMovement(move);
         }
+
+        Movement movement_script_lvl = instanciated_level_up_line.GetComponent<Movement>();
+        movement_script_lvl.SetMovement(move);
     }
     public void SetMovementSpeed(float speed)
     {
         for (int i = 0; i < instanciated_obstacles.Length; i++)
         {
-            Wall_Movement script = instanciated_obstacles[i].GetComponent<Wall_Movement>();
-            script.SetMovementSpeed(speed);
+            Movement movement_script = instanciated_obstacles[i].GetComponent<Movement>();
+            movement_script.SetMovementSpeed(speed);
         }
+
+        Movement movement_script_lvl = instanciated_level_up_line.GetComponent<Movement>();
+        movement_script_lvl.SetMovementSpeed(speed);
     }
 
 
