@@ -16,8 +16,12 @@ public class GameManager : MonoBehaviour
     public float landscape_movement_speed = 8.0f;
 
     public float speed_increase_factor = 0.08f;
+    public float spawn_distance_increase_factor = 0.25f;
     public float minimum_speed = 8f;
     public float maximum_speed = 12f;
+    public float maximum_spawn_distance = 25f;
+    private float spawn_distance = 15f;
+    
 
 
     public int level;
@@ -38,6 +42,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         obs_manager = gameObject.GetComponent<ObstacleManager>();
         ring_manager = gameObject.GetComponent<RingManager>();
         gui_manager = gameObject.GetComponent<GUIManager>();
@@ -46,9 +51,14 @@ public class GameManager : MonoBehaviour
         player_control = player_object.GetComponent<Player_Control>();
         player = player_model.GetComponent<PlayerModel>();
 
-        
+        gui_manager.ActivateGUI(true);
+        gui_manager.ActivateGameOverScreen(false);
+
         level = start_level;
-        
+        obs_manager.SetMovementSpeed(obstacle_movement_speed);
+        ring_manager.SetMovementSpeed(ring_movement_speed);
+        landscape_manager.SetMovementSpeed(landscape_movement_speed);
+        spawn_distance = obs_manager.GetDistanceNextObstacleLine();
     }
 
     // Update is called once per frame
@@ -60,10 +70,10 @@ public class GameManager : MonoBehaviour
         if (start_level == 0)
         {
             level = player.GetPlayerLevel();
-           
+            
         }
-      
-        
+
+
         if (current_level != level)
         {
             ChangeDifficulty(level);
@@ -80,10 +90,9 @@ public class GameManager : MonoBehaviour
         if (player.GetCollisionStatus() && !player_invincible)
         {
             
-            Debug.Log("Player defeated!");
+          
             StopGame();
-            Debug.Log("Score:");
-            Debug.Log(score);
+            
 
         }
         else
@@ -92,9 +101,7 @@ public class GameManager : MonoBehaviour
             gui_manager.PrintLevel(current_level);
         }
 
-        //obs_manager.SetMovementSpeed(obstacle_movement_speed);
-        //ring_manager.SetMovementSpeed(ring_movement_speed);
-        //landscape_manager.SetMovementSpeed(landscape_movement_speed);
+        
 
     }
 
@@ -125,11 +132,12 @@ public class GameManager : MonoBehaviour
 
         //OBSTACLES
         
-        // If level gets higher, more difficult obstacles will be spawned
+        // If level gets higher, more difficult obstacles will be spawned and spawning distance will be reduced (0-20)
         if (game_level >= 0 && game_level <= 4)
         {
             Debug.Log("Set range to 0, 5");
             obs_manager.SetLevelRange(0, 5);
+            
         }
 
         if (game_level >= 5 && game_level <= 10)
@@ -156,18 +164,33 @@ public class GameManager : MonoBehaviour
             obs_manager.SetLevelRange(25, 50);
         }
 
-
-        current_level = game_level;
+        //SPAWNING
+        float new_distance;
+        new_distance = obs_manager.GetDistanceNextObstacleLine() + spawn_distance_increase_factor;
+    
+        if (new_distance <= maximum_spawn_distance)
+        {
+            obs_manager.ChangeDistanceNextObstacleLine(spawn_distance_increase_factor);
+        }
         
+
+        current_level = game_level;    
         
     }
 
     void StopGame()
     {
+        
+
         obs_manager.SetMovement(false);
         player_control.SetMovement(false);
         landscape_manager.SetMovement(false);
         ring_manager.SetMovement(false);
+        gui_manager.PrintScore(score);
+        gui_manager.PrintLevel(current_level);
+        gui_manager.ActivateGUI(false);
+        gui_manager.ActivateGameOverScreen(true);
+        
     }
 
     void IncreaseScore()

@@ -131,7 +131,6 @@ public class RingManager : MonoBehaviour
             instanciated_rings[random_pick].SetActive(true);
             instanciated_rings[random_pick].transform.position = instance_pos;
             script.SetMovement(true);
-            script.SetPoolSpawnFlag(false);
 
         }
 
@@ -162,27 +161,8 @@ public class RingManager : MonoBehaviour
             instanciated_super_rings[random_pick].SetActive(true);
             instanciated_super_rings[random_pick].transform.position = instance_pos;
             script.SetMovement(true);
-            script.SetPoolSpawnFlag(false);
         }
-        //Check if pick is from pool
-        /*
-        if (script.GetPoolSpawnFlag())
-        {
-            Debug.Log("Pick is from pool.");
-            instanciated_super_rings[random_pick].transform.position = instance_pos;
-            script.SetMovement(true);
-            script.SetPoolSpawnFlag(false);
-        }
-        //Check if obstacle can already be respawned
-        else if (script.GetRespawnFlag())
-        {
-            Debug.Log("Pick can be respawned");
-            instanciated_super_rings[random_pick].transform.position = instance_pos;
-            script.SetMovement(true);
-            script.SetRespawnFlag(false);
-        }
-        */
-        //Try another pick
+
         else
         {
            // Debug.Log("Could not find a suitable pick.");

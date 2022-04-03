@@ -7,8 +7,6 @@ public class Movement : MonoBehaviour
 {
     public float movespeed = 3.0f;
     public bool movement = false;
-    private bool respawn = false;
-    private bool spawned_from_pool = true;
     public int move_direction=0;
 
 
@@ -43,31 +41,11 @@ public class Movement : MonoBehaviour
         return movement;
     }
 
-    //Are typically set by the a manager script
-    public void SetRespawnFlag(bool can_be_respawned)
-    {
-        respawn = can_be_respawned;
-    }
-
-    public void SetPoolSpawnFlag(bool spawned)
-    {
-        spawned_from_pool = spawned;
-    }
     public void SetMovementSpeed(float speed)
     {
         movespeed = speed;
     }
 
-    public bool GetPoolSpawnFlag()
-    {
-        return spawned_from_pool;
-    }
-
-
-    public bool GetRespawnFlag()
-    {
-        return respawn;
-    }
-
+  
 
 }

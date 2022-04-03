@@ -21,9 +21,13 @@ public class ObstacleManager : MonoBehaviour
     private GameObject instanciated_level_up_line;
 
     private NextObstacle next_obstacle_script;
-    public bool initial_spawn = false;
+    public bool force_spawn = true;
     public bool spawn_next_level = false;
-    public bool stop_spawning = false;
+
+    enum spawn_mode { none, obstacle, levelup};
+    private spawn_mode current_spawn_mode = spawn_mode.none;
+    private spawn_mode previous_spawn_mode = spawn_mode.none;
+    //private states trigger_move = states.none;
 
     private Vector3 spawn_pos;
     private Vector3 pool_position = new Vector3(40, 40, 0);
@@ -31,6 +35,7 @@ public class ObstacleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        current_spawn_mode = spawn_mode.obstacle;
         CreateObstaclePool();
         spawn_pos = spawn_line.transform.position;
         next_obstacle_script = next_obstacle_line.GetComponent<NextObstacle>();
@@ -47,55 +52,44 @@ public class ObstacleManager : MonoBehaviour
         float probability = Random.Range(0.0f, 1.0f);
         float threshold = 1.0f - spawn_probability;
 
-        //CheckLevelUp();
-        
-        if((next_obstacle_script.GetObstacleCollisionStatus() || initial_spawn == false))
+        if ((next_obstacle_script.GetObstacleCollisionStatus() || force_spawn == true))
         {
-            if (!spawn_next_level && next_obstacle_script.GetLevelUpCollisionStatus())
+           
+            if (current_spawn_mode == spawn_mode.obstacle && !next_obstacle_script.GetSpecialEventStatus() || force_spawn == true)
             {
                 SpawnObstacle();
             }
-            else
+            else if (current_spawn_mode == spawn_mode.levelup)
             {
-               
-                    SpawnLevelUp();
-               
+                SpawnLevelUp();
+
             }
             
         }      
     }
 
-    private void CheckLevelUp()
-    {
-        if (spawn_next_level && next_obstacle_script.GetObstacleCollisionStatus())
-        {
-                Debug.Log("Spawning LevelUp Line");
-                SpawnLevelUp();
-        }
-
-        if (instanciated_level_up_line.activeSelf)
-        {
-            //Wait for level up line to pass the next spawn line
-            if (next_obstacle_script.GetLevelUpCollisionStatus())
-            {
-                stop_spawning = false;
-            }
-        }
-    }
     public void EngageNextLevel()
     {
-        if (!spawn_next_level)
+        if (current_spawn_mode != spawn_mode.levelup)
         {
-            spawn_next_level = true;
-            stop_spawning = true;
+            current_spawn_mode = spawn_mode.levelup;
         }
       
     }
-
     public void SetLevelRange(int min, int max)
     {
         min_level = min;
         max_level = max;
+    }
+
+    public void ChangeDistanceNextObstacleLine(float z_diff)
+    {
+        next_obstacle_line.transform.position = new Vector3(next_obstacle_line.transform.position.x, next_obstacle_line.transform.position.y, (next_obstacle_line.transform.position.z + z_diff));
+    }
+
+    public float GetDistanceNextObstacleLine()
+    {
+        return next_obstacle_line.transform.localPosition.z;
     }
 
     void CreateObstaclePool()
@@ -122,8 +116,10 @@ public class ObstacleManager : MonoBehaviour
             instanciated_level_up_line.SetActive(true);
             instanciated_level_up_line.transform.position = spawn_pos;
             movement_script.SetMovement(true);
-            next_obstacle_script.ResetLevelUpCollision();
-            spawn_next_level = false;
+            next_obstacle_script.SetSpecialEventStatus(true);
+            
+            //back to previous spawning
+            current_spawn_mode = previous_spawn_mode;
         }
  
     }
@@ -149,7 +145,8 @@ public class ObstacleManager : MonoBehaviour
             instanciated_obstacles[random_pick].transform.position = spawn_pos;
             movement_script.SetMovement(true);
             next_obstacle_script.ResetObstacleCollision();
-            initial_spawn = true;
+            previous_spawn_mode = current_spawn_mode;
+            force_spawn = false;
         }
         else
         {

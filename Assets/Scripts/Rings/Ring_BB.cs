@@ -25,9 +25,17 @@ public class Ring_BB : MonoBehaviour
             Debug.Log("Ring collided with respawn line!");
             //Assuming this script always has a parent with the ring movement script attached
             Movement script = gameObject.transform.GetComponent<Movement>();
-            script.SetRespawnFlag(true);
+            Ring child_script = gameObject.transform.GetChild(0).gameObject.transform.GetComponent<Ring>();
             script.SetMovement(false);
+            child_script.Appear();
             gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.tag == "Wall")
+        {
+            Movement script = gameObject.transform.GetComponent<Movement>();
+            gameObject.SetActive(false);
+            script.SetMovement(false);
         }
     }
 }

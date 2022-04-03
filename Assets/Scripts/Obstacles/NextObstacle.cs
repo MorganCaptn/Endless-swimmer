@@ -5,8 +5,11 @@ using UnityEngine;
 public class NextObstacle : MonoBehaviour
 {
     private bool obstacle_collided = false;
-    private bool level_up_collided = false;
-    // Start is called before the first frame update
+
+    //Used for stopping (obstacle) spawning, f.e. during level change
+    private bool special_event = false;
+   
+
     void Start()
     {
         
@@ -32,18 +35,21 @@ public class NextObstacle : MonoBehaviour
         if (other.gameObject.tag == "LevelUp")
         {
             Debug.Log("Level Up passed the next spawn line!");
-            level_up_collided = true;
+            special_event = false;
         }
-
     }
     public bool GetObstacleCollisionStatus()
     {
         return obstacle_collided;
     }
 
-    public bool GetLevelUpCollisionStatus()
+    public bool GetSpecialEventStatus()
     {
-        return level_up_collided;
+        return special_event;
+    }
+    public void SetSpecialEventStatus(bool event_status)
+    {
+        special_event = event_status;
     }
     public void ResetObstacleCollision()
     {
@@ -54,12 +60,4 @@ public class NextObstacle : MonoBehaviour
        
     }
 
-    public void ResetLevelUpCollision()
-    {
-        if (level_up_collided)
-        {
-            level_up_collided = false;
-        }
-
-    }
 }

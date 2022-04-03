@@ -102,7 +102,6 @@ public class LandscapeManager : MonoBehaviour
             instanciated_landscapes[random_pick].SetActive(true);
             instanciated_landscapes[random_pick].transform.position = landscape_spawn_pos;
             script.SetMovement(true);
-            script.SetPoolSpawnFlag(false);
             landscape_spawned = true;
         }
         /*

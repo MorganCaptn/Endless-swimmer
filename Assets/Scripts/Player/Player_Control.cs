@@ -84,7 +84,8 @@ public class Player_Control : MonoBehaviour
     void Update()
     {
 
-       
+        if (movement_allowed)
+        {
         GetHorizontalMovement();
       
         //current position
@@ -110,8 +111,7 @@ public class Player_Control : MonoBehaviour
             SuperJump();
         }
 
-        if (movement_allowed)
-        {
+      
             if (playerPosition.x <= max_move_right && playerPosition.x >= max_move_left)
             {
                 player_model.transform.Rotate(0, r * Time.deltaTime, 0);
