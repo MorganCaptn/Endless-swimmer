@@ -4489,7 +4489,7 @@ MonoBehaviour:
   maximum_speed: 12
   maximum_spawn_distance: 25
   level: 0
-  player_invincible: 1
+  player_invincible: 0
   start_level: 0
 --- !u!114 &963194230
 MonoBehaviour:
